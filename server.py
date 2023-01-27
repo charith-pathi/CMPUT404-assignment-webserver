@@ -65,61 +65,56 @@ class MyWebServer(socketserver.BaseRequestHandler):
             if os.path.exists(file_path):
                 # Exceptional case when filename already ends with '/'
                 if file_path[-1] == "/" and len(file_path) > 4:
-                    file_path[:-1]
                     # Removes trailing '/' and rechecks if path exists
-                    if os.path.exists(file_path):
-                        self.response += f'{self.protocol} 200 OK\r\n'
+                    file_path[:-1]
 
-                # Path with ./www exists
+                # Splits the path to get the subdirectories and filename
+                subs = os.path.split(file_path)
+                fname = subs[1]
+
+                # If at root
+                if fname == "":
+                    file_path +=  "index.html"
+                    # Test if file exists
+                    try:
+                        file = open(file_path, 'r')
+                    except:
+                        # Else, handle not found error
+                        self.handle_not_found()
+                        return
+                    page_body = file.read()
+                    self.response += f'{self.protocol} 200 OK\r\n'
+                    self.response += f'Content-Type: text/html\r\n\r\n'
+                    self.response += f'{page_body}\r\n'
+                    
                 else:
-                    # Splits the path to get the subdirectories and filename
-                    subs = os.path.split(file_path)
-                    fname = subs[1]
-
-                    # If at root
-                    if fname == "":
-                        file_path +=  "index.html"
-                        # Test if file exists
-                        try:
-                            file = open(file_path, 'r')
-                        except:
-                            # Else, handle not found error
-                            self.handle_not_found()
-                            return
-                        page_body = file.read()
-                        self.response += f'{self.protocol} 200 OK\r\n'
-                        self.response += f'Content-Type: text/html\r\n\r\n'
-                        self.response += f'{page_body}\r\n'
-                        
+                    # Adds trailing '/' to filename
+                    fname += "/"
+                    # Check if filename contains .html/ at the end
+                    if fname[-6:] == ".html/":
+                        self.content_type = "text/html"
+                    # Else, check if filename contains .css/ at the end
+                    elif fname[-5:] == ".css/":
+                        self.content_type = "text/css"
+                    # Handle moved permanently case
                     else:
-                        # Adds trailing '/' to filename
-                        fname += "/"
-                        # Check if filename contains .html/ at the end
-                        if fname[-6:] == ".html/":
-                            self.content_type = "text/html"
-                        # Else, check if filename contains .css/ at the end
-                        elif fname[-5:] == ".css/":
-                            self.content_type = "text/css"
-                        # Handle moved permanently case
-                        else:
-                            print("File_path: " + file_path)
-                            replaced_path = path[1:]
-                            self.response += f'{self.protocol} 301 Moved Permanently\r\n'
-                            self.response += f'Location: http://localhost:8080/{replaced_path}/\r\n\r\n'
-                            return False
+                        replaced_path = path[1:]
+                        self.response += f'{self.protocol} 301 Moved Permanently\r\n'
+                        self.response += f'Location: http://localhost:8080/{replaced_path}/\r\n\r\n'
+                        return False
 
-                        # Test if file exists
-                        try:
-                            file = open(file_path, 'r')
-                        except:
-                            # Else, handle not found error
-                            self.handle_not_found()
-                            return False
+                    # Test if file exists
+                    try:
+                        file = open(file_path, 'r')
+                    except:
+                        # Else, handle not found error
+                        self.handle_not_found()
+                        return False
 
-                        page_body = file.read()
-                        self.response += f'{self.protocol} 200 OK\r\n'
-                        self.response += f'Content-Type: {self.content_type}\r\n\r\n'
-                        self.response += f'{page_body}\r\n'
+                    page_body = file.read()
+                    self.response += f'{self.protocol} 200 OK\r\n'
+                    self.response += f'Content-Type: {self.content_type}\r\n\r\n'
+                    self.response += f'{page_body}\r\n'
 
             # Else, handle not found error
             else: 
@@ -128,6 +123,7 @@ class MyWebServer(socketserver.BaseRequestHandler):
     # Send the 404 Not Found Response
     def handle_not_found(self):
         self.response += f'{self.protocol} 404 Not Found\r\n'
+
 
 if __name__ == "__main__":
     HOST, PORT = "localhost", 8080

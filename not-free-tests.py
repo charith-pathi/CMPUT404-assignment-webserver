@@ -19,7 +19,7 @@ from urllib import request
 import unittest
 import os
 
-BASEURL = "http://127.0.0.1:8080"
+BASEURL = "http://localhost:8080"
 
 class TestYourWebserver(unittest.TestCase):
     def setUp(self,baseurl=BASEURL):
@@ -89,6 +89,7 @@ class TestYourWebserver(unittest.TestCase):
             if code >= 200 and code <= 299 and req.geturl() == expected_url:
                 self.assertTrue(True, "The library has redirected for us")
             else:
+                # self.assertTrue(False, "Expected URL: " + expected_url)
                 self.assertTrue(False, "The URL hasn't changed %s %s" % (code,req.geturl()))
         except request.HTTPError as e:
             code = e.getcode() 
