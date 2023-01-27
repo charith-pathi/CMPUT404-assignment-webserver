@@ -87,6 +87,10 @@ class MyWebServer(socketserver.BaseRequestHandler):
                     self.response += f'Content-Type: text/html\r\n\r\n'
                     self.response += f'{page_body}\r\n'
                     
+
+                # *    Title: Common MIME types
+                # *    Author: Mozilla
+                # *    Availability: https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types
                 else:
                     # Adds trailing '/' to filename
                     fname += "/"

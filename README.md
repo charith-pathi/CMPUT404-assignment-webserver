@@ -18,10 +18,13 @@ server.py contains contributions from:
 * Eddie Antonio Santos
 * Jackson Z Chang
 * Mandy Meindersma 
-* Charith Pathirathna (Modifications)
+* Charith Pathirathna (Modifications - Copyright 2023)
 
 But the server.py example is derived from the python documentation
 examples thus some of the code is Copyright © 2001-2013 Python
 Software Foundation; All Rights Reserved under the PSF license (GPL
 compatible) http://docs.python.org/2/library/socketserver.html
 
+The following was referenced to modify server.py, bug fixes and complete the assignment. This reference is also mentioned with in-line comments in the code.
+
+    Common MIME types - https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types
